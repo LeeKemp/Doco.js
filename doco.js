@@ -8,38 +8,37 @@ var doco = (function () {
 		{
 			id: "inner",
 			title: "This is the innter title",
-			description: "This is the description"
+			description: "## Usage \n### Node\nThe simple way to use it with node is:\n\n```js\nvar markdown = require(\"markdown\" ).markdown;\nconsole.log( markdown.toHTML( \"Hello *World*!\" ) );```"
 		},{ 
 			className: "footer",
 			title: "This is the innter title 1",
-			description: "This is the description 1"
+			description: "This is the description 1 \n \n The footer is generated \n### Footer"
 		},{ 
 			className: "breadcrumb",
 			title: "These are generated using X",
-			description: "This is the description 1"
+			description: "This content is generated using the <br/>/some/service <br/> Call.. more info... "
+		},{ 
+			className: "active",
+			title: "Link",
+			description: "This is the description for the link"
 		}
+
 	];
 
    var doco = {
    		init: function () {
-      		console.log("init");
 			
       		var params = this.queryParameters();
 
-      		console.log(params);
-
       		if(params["doco"])
       		{
+      			console.log("Doco Enabled");
+
+				if(markdown)
+      				console.log("Markdown Enabled");
+
 				this.loadDoco();
 			}
-
-			document.body.onmouseover = function(element) {
-			
-				// console.log("Mouse over");
-				// console.log(element);
-			};
-
-
 
       	},  // init
 
@@ -50,6 +49,7 @@ var doco = (function () {
 
 		    var rect = elem.getBoundingClientRect();
 		    var over = document.createElement('div');
+		    var desc = document.createElement('div');
 
 		    over.style.position = 'absolute';
 		    over.style.top =    rect.top+'px';
@@ -57,10 +57,50 @@ var doco = (function () {
 		    over.style.height = rect.height+'px';
 		    over.style.width=   rect.width+'px';
 		    over.className = "doco_overlay";
+			over.innerHTML = doc.title;
+			// over.title = doc.description;
 			document.body.appendChild(over);
 
-			over.innerHTML = doc.title;
-			over.title = doc.description;
+			desc.style.position = 'absolute';
+			desc.style.width = '400px';
+		    desc.className = "doco_overlay_desc";
+			desc.style.top =    (rect.top - 2)+'px';
+
+			var left = document.body.clientWidth - 400;
+
+		    desc.style.left=left+"px";
+		    console.log(document.body.clientWidth);
+		    console.log(desc.style.width);
+		    console.log(left);
+		    desc.style.visibility = "hidden";
+
+		    if(markdown)
+		    {
+		    	desc.innerHTML = markdown.toHTML(doc.description); // MD
+		    }
+		    else
+		    {
+		    	desc.innerHTML = doc.description; // HTML
+		    }
+		    document.body.appendChild(desc);
+
+		    var onmouseover = function(e) {
+		    	console.log("Over Element");
+		    	desc.style.visibility= "visible";
+		    	over.className = "doco_overlay_over";
+		    }
+
+		    var onmouseout = function(e) {
+		    	console.log("Out Element");
+		    	desc.style.visibility="hidden";	
+		    	over.className = "doco_overlay";
+		    }
+
+		    over.onmouseover = onmouseover;
+		    over.onmouseout = onmouseout;
+		    desc.onmouseover = onmouseover;
+		    desc.onmouseout = onmouseout;
+
 			return over;
 		},
 

@@ -96,10 +96,9 @@ var doco = (function () {
 		    desc.mouseout(onmouseout);
 
 			return over;
-		},
+		}, // createDocoOverlay
 
       	loadDoco: function(data) {
-			console.log("loadDoco");
 
 			for(var i=0; i<data.length; i++)
 			{
@@ -122,8 +121,6 @@ var doco = (function () {
 				}
 			}
 
-	
-
       	}, // loadDoco
 		
 		queryParameters: function() {
@@ -137,7 +134,7 @@ var doco = (function () {
 		    }
 		  }
 		  return params;
-		}
+		} // queryParameters
 
    };
     

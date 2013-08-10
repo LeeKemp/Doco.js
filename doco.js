@@ -3,128 +3,122 @@
 
 var doco = (function () {
 
-	// This will be stored on the server one day
-	var data = [
-		{
-			id: "inner",
-			title: "This is the innter title",
-			description: "## Usage \n### Node\nThe simple way to use it with node is:\n\n```js\nvar markdown = require(\"markdown\" ).markdown;\nconsole.log( markdown.toHTML( \"Hello *World*!\" ) );```"
-		},{ 
-			className: "footer",
-			title: "This is the innter title 1",
-			description: "This is the description 1 \n \n The footer is generated \n### Footer"
-		},{ 
-			className: "breadcrumb",
-			title: "These are generated using X",
-			description: "This content is generated using the <br/>/some/service <br/> Call.. more info... "
-		},{ 
-			className: "active",
-			title: "Link",
-			description: "This is the description for the link"
-		}
-
-	];
-
    var doco = {
-   		init: function () {
+
+   		init: function (docoPath) {
 			
       		var params = this.queryParameters();
 
       		if(params["doco"])
       		{
-      			console.log("Doco Enabled");
+      			info.init();
+				info.addInfo("Doco Enabled.")
 
 				if(markdown)
-      				console.log("Markdown Enabled");
-
-				this.loadDoco();
+      				info.addInfo("Markdown Enabled.");
 			}
+
+			if(!docoPath)
+				docoPath = "doco.json";
+
+			info.addInfo("Doco file is '"+docoPath+"'.");
+
+			var jqxhr = $.getJSON( "doco.json", function(json) {
+				doco.loadDoco(json["doco"]);
+			})
+			//.done(function() { console.log( "second success" ); })
+			.fail(function(e) { 
+				info.addInfo("Error loading doco. Check that your json is valid <a href='http://jsonlint.com/'>jsonlint</a>");
+			})
+			//.always(function() { console.log( "complete" ); });
+
 
       	},  // init
 
 		createDocoOverlay: function(elem, doc) {
-			console.log(elem);
+
+			if(elem == null)
+			{
+				console.log("Elem was null");
+				return;
+			}
+
+			// console.log(elem);
 
 			elem.className = elem.className + " doco_docoed";
+			var elemOffset = elem.offset();
 
-		    var rect = elem.getBoundingClientRect();
-		    var over = document.createElement('div');
-		    var desc = document.createElement('div');
-
-		    over.style.position = 'absolute';
-		    over.style.top =    rect.top+'px';
-		    over.style.left=    rect.left+'px';
-		    over.style.height = rect.height+'px';
-		    over.style.width=   rect.width+'px';
-		    over.className = "doco_overlay";
-			over.innerHTML = doc.title;
+			// Overlay Div
+		    var over = $("<div>");
+		    over.css({
+		    	left:elemOffset.left,
+		    	top:elemOffset.top,
+		    	height:elem.outerHeight(),
+		    	width:elem.outerWidth()
+		    });
+		    over.addClass("doco_overlay");
+			over.html(doc.title);	
 			// over.title = doc.description;
-			document.body.appendChild(over);
+			$("body").append(over);
 
-			desc.style.position = 'absolute';
-			desc.style.width = '400px';
-		    desc.className = "doco_overlay_desc";
-			desc.style.top =    (rect.top - 2)+'px';
-
-			var left = document.body.clientWidth - 400;
-
-		    desc.style.left=left+"px";
-		    console.log(document.body.clientWidth);
-		    console.log(desc.style.width);
-		    console.log(left);
-		    desc.style.visibility = "hidden";
+			// Description Div
+		    var desc = $("<div>");
+		    desc.addClass("doco_overlay_desc");
+			desc.css({
+		    	//left:document.body.clientWidth - desc.width,
+		    	top:elemOffset.top - 5,
+		    });
+			desc.hide();
 
 		    if(markdown)
 		    {
-		    	desc.innerHTML = markdown.toHTML(doc.description); // MD
+		    	desc.html(markdown.toHTML(doc.description)); // MD
 		    }
 		    else
 		    {
-		    	desc.innerHTML = doc.description; // HTML
+		    	desc.html(doc.description); // HTML
 		    }
-		    document.body.appendChild(desc);
+		    $("body").append(desc);
 
 		    var onmouseover = function(e) {
-		    	console.log("Over Element");
-		    	desc.style.visibility= "visible";
-		    	over.className = "doco_overlay_over";
+		    	desc.show();
+		    	over.addClass("doco_overlay_over");
 		    }
 
 		    var onmouseout = function(e) {
-		    	console.log("Out Element");
-		    	desc.style.visibility="hidden";	
-		    	over.className = "doco_overlay";
+		    	desc.hide();	
+		    	over.removeClass("doco_overlay_over");
 		    }
 
-		    over.onmouseover = onmouseover;
-		    over.onmouseout = onmouseout;
-		    desc.onmouseover = onmouseover;
-		    desc.onmouseout = onmouseout;
+		    over.mouseover(onmouseover);
+		    over.mouseout(onmouseout);
+		    desc.mouseover(onmouseover);
+		    desc.mouseout(onmouseout);
 
 			return over;
 		},
 
-      	loadDoco: function() {
+      	loadDoco: function(data) {
 			console.log("loadDoco");
 
 			for(var i=0; i<data.length; i++)
 			{
-				var doc = data[i];
-				console.log(doc);
 
-				if(doc.id)
-				{
-					var elem = document.getElementById(doc.id);
-					var over = this.createDocoOverlay(elem, doc);
+				var doc = data[i];
+
+				var pageMatches = true;
+				if(doc.page && !window.location.pathname.match(doc.page)) {
+					pageMatches = false;
 				}
-				else if(doc.className)
-				{
-					var elems = document.getElementsByClassName(doc.className);		
-					for(var j=0; j<elems.length; j++)
-					{
-						var elem = elems[j];
-						var over = this.createDocoOverlay(elem, doc);
-					}
+
+				if(doc.selector && pageMatches) {
+					// console.log($(doc.selector));
+
+					$(doc.selector).each(function() {
+							doco.createDocoOverlay($(this), doc);
+						}
+					);
+
 				}
 			}
 
@@ -147,6 +141,20 @@ var doco = (function () {
 
    };
     
+	var info = {
+
+		div:$("<div>"),  
+
+		init: function() {
+			this.div.addClass("doco_info");
+			$("body").append(this.div);
+		},
+
+		addInfo: function(message) {
+			this.div.html(this.div.html() + message + "<br/>");
+		}
+	};
+
    return doco;
 }());
 

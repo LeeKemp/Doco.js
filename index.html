@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css">
 
 	<!-- JavaScript plugins (requires jQuery) -->
-    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/js/bootstrap.min.js"></script>
@@ -16,44 +16,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
 	<style>
-		.doco_docoed {
-			
-		}
-		
-		.doco_overlay {
-			border: 2px solid yellow;
-			background-color: rgba(255,255,0,0.3);
-			z-index: 99998;
-			text-align: center;
-			font-size: 20;
-			padding: 2px;
-		}
-
-		.doco_overlay_over {
-			border: 4px solid yellow;
-			background-color: rgba(255,255,0,0.5);
-			box-shadow: 0 0 10px rgba(255,255,0, 1);
-			z-index: 99998;
-			text-align: center;
-			font-size: 20;
-			padding: 2px;
-		}
-
-		.doco_overlay_desc {
-			z-index: 99999;			
-			//border: 1px solid black;
-			visibility: hidden;
-			background-color: rgba(27,161,226, 1);
-			padding: 15px;
-			box-shadow: 0 0 5px #888;
-			margin-left: 2px;
-			margin-top: 2px;
-		}
-
 		#inner {
 			background-color: grey;
 		}
-
 	</style>
 
 </head>
@@ -114,9 +79,9 @@
 		<span>Span Text</span>
 
 		<div id="inner" class="well" >
-			<p>Some text<br> in a p</p>
+			<p class="notIndex">Some text<br> in a p</p>
 			<p>Some text 1</p>
-			<p>Some text 3</p>
+			<p class="indexOnly">Some text 3</p>
 			<p>Some text 4</p>
 		</div>
 
@@ -132,10 +97,10 @@
 		</ul>
 	</footer>
 
+	<link rel="stylesheet" href="doco.css">
 	<script src="doco.js" ></script>
 	<script>
 		doco.init();
-
 	</script>
 
 </body>

@@ -1,94 +1,136 @@
-// Selectors
-// http://www.qaautomation.net/?p=388 
+/*
+ <script type="text/javascript" src="@routes.Assets.at("doco/doco.js")"></script>
+ <script type="text/javascript" src="@routes.Assets.at("doco/markdown.js")"></script>
+ <script>
+ 	doco.init("@routes.Assets.at("doco/doco.json")");
+ </script>
+ <link rel="stylesheet" href="@routes.Assets.at("doco/doco.css")">
+
+ */
+
 
 var doco = (function () {
 
-	// This will be stored on the server one day
-	var data = [
-		{
-			id: "inner",
-			title: "This is the innter title",
-			description: "This is the description"
-		},{ 
-			className: "footer",
-			title: "This is the innter title 1",
-			description: "This is the description 1"
-		},{ 
-			className: "breadcrumb",
-			title: "These are generated using X",
-			description: "This is the description 1"
-		}
-	];
-
    var doco = {
-   		init: function () {
-      		console.log("init");
+
+   		init: function (docoPath) {
 			
-      		var params = this.queryParameters();
+			$(window).bind("load", function() {
+   
+	      		var params = doco.queryParameters();
 
-      		console.log(params);
+	      		if(params["doco"])
+	      		{
+	      			info.init();
+					info.addInfo("Doco Enabled.")
 
-      		if(params["doco"])
-      		{
-				this.loadDoco();
-			}
+					/*if(markdown)
+	      				info.addInfo("Markdown Enabled.");
+					*/
 
-			document.body.onmouseover = function(element) {
-			
-				// console.log("Mouse over");
-				// console.log(element);
-			};
+					if(!docoPath)
+						docoPath = "doco.json";
 
+					info.addInfo("Doco file is '"+docoPath+"'.");
 
+					var jqxhr = $.getJSON( docoPath, function(json) {
+						doco.loadDoco(json["doco"]);
+					})
+					//.done(function() { console.log( "second success" ); })
+					.fail(function(e) { 
+						info.addInfo("Error loading doco. Check that your json is valid <a href='http://jsonlint.com/'>jsonlint</a>");
+					})
+					//.always(function() { console.log( "complete" ); });
+				}
+			});
 
       	},  // init
 
 		createDocoOverlay: function(elem, doc) {
-			console.log(elem);
+
+			if(elem == null)
+			{
+				console.log("Elem was null");
+				return;
+			}
+
+			// console.log(elem);
 
 			elem.className = elem.className + " doco_docoed";
+			var elemOffset = elem.offset();
 
-		    var rect = elem.getBoundingClientRect();
-		    var over = document.createElement('div');
+			// Overlay Div
+		    var over = $("<div>");
+		    over.css({
+		    	left:elemOffset.left,
+		    	top:elemOffset.top,
+		    	height:elem.outerHeight(),
+		    	width:elem.outerWidth()
+		    });
+		    elem.addClass("doco_overlay");
+			over.html(doc.title);	
+			// over.title = doc.description;
+			//$("body").append(over);
 
-		    over.style.position = 'absolute';
-		    over.style.top =    rect.top+'px';
-		    over.style.left=    rect.left+'px';
-		    over.style.height = rect.height+'px';
-		    over.style.width=   rect.width+'px';
-		    over.className = "doco_overlay";
-			document.body.appendChild(over);
+			// Description Div
+		    var desc = $("<div>");
+		    desc.addClass("doco_overlay_desc");
+			desc.css({
+		    	//left:document.body.clientWidth - desc.width,
+		    	top:elemOffset.top - 5,
+		    });
+			desc.hide();
 
-			over.innerHTML = doc.title;
-			over.title = doc.description;
+		    if(markdown)
+		    {
+		    	desc.html(markdown.toHTML(doc.description)); // MD
+		    }
+		    else
+		    {
+		    	desc.html(doc.description); // HTML
+		    }
+		    $("body").append(desc);
+
+		    var onmouseover = function(e) {
+		    	desc.show();
+		    	elem.addClass("doco_overlay_over");
+		    }
+
+		    var onmouseout = function(e) {
+		    	desc.hide();	
+		    	elem.removeClass("doco_overlay_over");
+		    }
+
+		    elem.mouseover(onmouseover);
+		    elem.mouseout(onmouseout);
+		    desc.mouseover(onmouseover);
+		    desc.mouseout(onmouseout);
+
 			return over;
-		},
+		}, // createDocoOverlay
 
-      	loadDoco: function() {
-			console.log("loadDoco");
+      	loadDoco: function(data) {
 
 			for(var i=0; i<data.length; i++)
 			{
-				var doc = data[i];
-				console.log(doc);
 
-				if(doc.id)
-				{
-					var elem = document.getElementById(doc.id);
-					var over = this.createDocoOverlay(elem, doc);
+				var doc = data[i];
+
+				var pageMatches = true;
+				if(doc.page && !window.location.pathname.match(doc.page)) {
+					pageMatches = false;
 				}
-				else if(doc.className)
-				{
-					var elems = document.getElementsByClassName(doc.className);		
-					for(var j=0; j<elems.length; j++)
-					{
-						var elem = elems[j];
-						var over = this.createDocoOverlay(elem, doc);
-					}
+
+				if(doc.selector && pageMatches) {
+					// console.log($(doc.selector));
+
+					$(doc.selector).each(function() {
+							doco.createDocoOverlay($(this), doc);
+						}
+					);
+
 				}
 			}
-
-	
 
       	}, // loadDoco
 		
@@ -103,10 +145,24 @@ var doco = (function () {
 		    }
 		  }
 		  return params;
-		}
+		} // queryParameters
 
    };
     
+	var info = {
+
+		div:$("<div>"),  
+
+		init: function() {
+			this.div.addClass("doco_info");
+			$("body").append(this.div);
+		},
+
+		addInfo: function(message) {
+			this.div.html(this.div.html() + message + "<br/>");
+		}
+	};
+
    return doco;
 }());
 

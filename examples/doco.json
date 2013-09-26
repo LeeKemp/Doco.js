@@ -1,0 +1,40 @@
+{
+    "settings": {
+        
+    },
+
+    "doco": [
+        {
+            "selector": ".navbar-inner .container .nav",
+            "title": "Navbar - Child playlist of the home plalist",
+            "description": "## Usage \n### Node\nThe simple way to use it with node is:\n\n```js\nvar markdown = require(\"markdown\" ).markdown;\nconsole.log( markdown.toHTML( \"Hello *World*!\" ) );```"
+        },
+        {
+            "selector": ".navbar-search",
+            "title": "Search",
+            "description": "## Usage \n### Node\nThe simple way to use it with node is:\n\n```js\nvar markdown = require(\"markdown\" ).markdown;\nconsole.log( markdown.toHTML( \"Hello *World*!\" ) );```"
+        },
+        {
+            "selector": ".breadcrumb",
+            "page" : "^/section",
+            "title": "GetFirstRootPlaylist for Playlist",
+            "description": "This content is generated using the <br/>/some/services <br/> Call.. more info... "
+        },
+        {
+            "selector": "#SidebarNowPlayingTab",
+            "title": "Now Playing",
+            "description": "## Usage \n### Node\nThe simple way to use it with node is:\n\n```js\nvar markdown = require(\"markdown\" ).markdown;\nconsole.log( markdown.toHTML( \"Hello *World*!\" ) );```"
+        },
+        {
+            "selector": "#SidebarSpecials",
+            "title": "Specials",
+            "description": "## Usage \n### Node\nThe simple way to use it with node is:\n\n```js\nvar markdown = require(\"markdown\" ).markdown;\nconsole.log( markdown.toHTML( \"Hello *World*!\" ) );```"
+        },
+        {
+            "selector": ".video-group-content",
+            "title": "Video Group",
+            "description": "## Usage \n### Node\nThe simple way to use it with node is:\n\n```js\nvar markdown = require(\"markdown\" ).markdown;\nconsole.log( markdown.toHTML( \"Hello *World*!\" ) );```"
+        }
+
+    ]
+}

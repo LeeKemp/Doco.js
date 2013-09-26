@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*
  <script type="text/javascript" src="@routes.Assets.at("doco/doco.js")"></script>
  <script type="text/javascript" src="@routes.Assets.at("doco/markdown.js")"></script>
@@ -8,6 +9,10 @@
 
  */
 
+=======
+// Selectors
+// http://www.qaautomation.net/?p=388 
+>>>>>>> 013d34a6ccc87dfce840974176c9e5793f8b29bd
 
 var doco = (function () {
 
@@ -15,6 +20,7 @@ var doco = (function () {
 
    		init: function (docoPath) {
 			
+<<<<<<< HEAD
 			$(window).bind("load", function() {
    
 	      		var params = doco.queryParameters();
@@ -43,6 +49,33 @@ var doco = (function () {
 					//.always(function() { console.log( "complete" ); });
 				}
 			});
+=======
+      		var params = this.queryParameters();
+
+      		if(params["doco"])
+      		{
+      			info.init();
+				info.addInfo("Doco Enabled.")
+
+				if(markdown)
+      				info.addInfo("Markdown Enabled.");
+			}
+
+			if(!docoPath)
+				docoPath = "doco.json";
+
+			info.addInfo("Doco file is '"+docoPath+"'.");
+
+			var jqxhr = $.getJSON( "doco.json", function(json) {
+				doco.loadDoco(json["doco"]);
+			})
+			//.done(function() { console.log( "second success" ); })
+			.fail(function(e) { 
+				info.addInfo("Error loading doco. Check that your json is valid <a href='http://jsonlint.com/'>jsonlint</a>");
+			})
+			//.always(function() { console.log( "complete" ); });
+
+>>>>>>> 013d34a6ccc87dfce840974176c9e5793f8b29bd
 
       	},  // init
 
@@ -67,10 +100,17 @@ var doco = (function () {
 		    	height:elem.outerHeight(),
 		    	width:elem.outerWidth()
 		    });
+<<<<<<< HEAD
 		    elem.addClass("doco_overlay");
 			over.html(doc.title);	
 			// over.title = doc.description;
 			//$("body").append(over);
+=======
+		    over.addClass("doco_overlay");
+			over.html(doc.title);	
+			// over.title = doc.description;
+			$("body").append(over);
+>>>>>>> 013d34a6ccc87dfce840974176c9e5793f8b29bd
 
 			// Description Div
 		    var desc = $("<div>");
@@ -93,16 +133,28 @@ var doco = (function () {
 
 		    var onmouseover = function(e) {
 		    	desc.show();
+<<<<<<< HEAD
 		    	elem.addClass("doco_overlay_over");
+=======
+		    	over.addClass("doco_overlay_over");
+>>>>>>> 013d34a6ccc87dfce840974176c9e5793f8b29bd
 		    }
 
 		    var onmouseout = function(e) {
 		    	desc.hide();	
+<<<<<<< HEAD
 		    	elem.removeClass("doco_overlay_over");
 		    }
 
 		    elem.mouseover(onmouseover);
 		    elem.mouseout(onmouseout);
+=======
+		    	over.removeClass("doco_overlay_over");
+		    }
+
+		    over.mouseover(onmouseover);
+		    over.mouseout(onmouseout);
+>>>>>>> 013d34a6ccc87dfce840974176c9e5793f8b29bd
 		    desc.mouseover(onmouseover);
 		    desc.mouseout(onmouseout);
 
